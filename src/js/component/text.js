@@ -240,7 +240,7 @@ class Text extends Component {
             newText.on({
                 mouseup: this._onFabricMouseUp.bind(this)
             });
-            canvas.on("text:editing:entered", this.onFabricClearText.bind(this))
+            canvas.on('text:editing:entered', this.onFabricClearText.bind(this));
 
             canvas.add(newText);
 
@@ -284,13 +284,12 @@ class Text extends Component {
     setStyle(activeObj, styleObj) {
         return new Promise(resolve => {
             snippet.forEach(styleObj, (val, key) => {
-                if (activeObj[key] === val) {
+                const selectedPart = activeObj.getSelectionStyles();
+                if (selectedPart[key] === val) {
                     styleObj[key] = resetStyles[key] || '';
                 }
             }, this);
-
-            activeObj.set(styleObj);
-
+            this.getCanvas().getActiveObject().setSelectionStyles(styleObj);
             this.getCanvas().renderAll();
             resolve();
         });
@@ -438,7 +437,6 @@ class Text extends Component {
         const ratio = this.getCanvasRatio();
         const obj = this._editingObj;
         const textareaStyle = this._textarea.style;
-        
         setTimeout(() => {
             obj.text(this._textarea.value);
 
@@ -456,14 +454,9 @@ class Text extends Component {
         const editingObj = this._editingObj;
         const editingObjInfos = this._editingObjInfos;
         const textContent = this._textarea.value;
-<<<<<<< HEAD
         let transWidth = (editingObj.width / ratio) - (editingObjInfos.width / ratio);
         let transHeight = (editingObj.height / ratio) - (editingObjInfos.height / ratio);
 
-=======
-        let transWidth = (editingObj.getWidth() / ratio) - (editingObjInfos.width / ratio);
-        let transHeight = (editingObj.getHeight() / ratio) - (editingObjInfos.height / ratio);
->>>>>>> change placeholder
         if (ratio === 1) {
             transWidth /= 2;
             transHeight /= 2;
@@ -522,7 +515,6 @@ class Text extends Component {
         this.isPrevEditing = true;
 
         this.setSelectedInfo(fEvent.target, false);
-        
         if (obj) {
             // obj is empty object at initial time, will be set fabric object
             if (obj.text === '') {
@@ -583,16 +575,15 @@ class Text extends Component {
             });
         }
     }
-    
-    onFabricClearText(e) {
-      console.log(1)
-      const obj = this.getSelectedObj()
-      if (obj.text === "Enter text here") {
-        obj.selectAll();
-        obj.removeChars();
-        console.log(obj)
-      };
+
+    onFabricClearText() {
+        const obj = this.getSelectedObj();
+        if (obj.text === 'Enter text here') {
+            obj.selectAll();
+            obj.removeChars();
+        }
     }
+
     /**
      * Fabric mouseup event handler
      * @param {fabric.Event} fEvent - Current mousedown event on selected object
@@ -601,13 +592,8 @@ class Text extends Component {
     _onFabricMouseUp(fEvent) {
         const {target} = fEvent;
         const newClickTime = (new Date()).getTime();
-<<<<<<< HEAD
 
         if (target.isEditing || this._isDoubleClick(newClickTime)) {
-=======
-        if (this._isDoubleClick(newClickTime)) {
-            
->>>>>>> change placeholder
             if (!this.useItext) {
                 this._changeToEditingMode(target);
             }
@@ -635,11 +621,7 @@ class Text extends Component {
     _changeToEditingMode(obj) {
         const ratio = this.getCanvasRatio();
         const textareaStyle = this._textarea.style;
-<<<<<<< HEAD
         const canvas = this.getCanvas();
-
-=======
->>>>>>> change placeholder
         this.isPrevEditing = true;
 
         canvas.remove(obj);
